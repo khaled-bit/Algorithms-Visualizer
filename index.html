@@ -273,6 +273,73 @@ async function bubbleSort() {
   bars[0].style.backgroundColor = 'green'; // Color the last bar
 
 }
+async function visualizeMerge(bars, start, end) {
+  // Visualize the process of merging
+  for (let i = start; i <= end; i++) {
+    bars[i].style.backgroundColor = 'green';
+    await new Promise(resolve => setTimeout(resolve, 1500));
+  }
+}
+
+async function merge(bars, start, middle, end) {
+  let n1 = middle - start + 1;
+  let n2 = end - middle;
+
+  let left = new Array(n1);
+  let right = new Array(n2);
+
+  for (let i = 0; i < n1; i++) {
+    left[i] = bars[start + i].style.height;
+    bars[start + i].style.backgroundColor = 'orange'; // Color for left sub-array
+  }
+  for (let j = 0; j < n2; j++) {
+    right[j] = bars[middle + 1 + j].style.height;
+    bars[middle + 1 + j].style.backgroundColor = 'yellow'; // Color for right sub-array
+  }
+
+  let i = 0, j = 0, k = start;
+  while (i < n1 && j < n2) {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    if (parseInt(left[i]) <= parseInt(right[j])) {
+      bars[k].style.height = left[i];
+      i++;
+    } else {
+      bars[k].style.height = right[j];
+      j++;
+    }
+    k++;
+  }
+
+  while (i < n1) {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    bars[k].style.height = left[i];
+    i++;
+    k++;
+  }
+
+  while (j < n2) {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    bars[k].style.height = right[j];
+    j++;
+    k++;
+  }
+
+  await visualizeMerge(bars, start, end);
+}
+
+async function mergeSort(bars, start = 0, end = bars.length - 1) {
+  if (start >= end) return;
+
+  let middle = Math.floor((start + end) / 2);
+  await mergeSort(bars, start, middle);
+  await mergeSort(bars, middle + 1, end);
+  await merge(bars, start, middle, end);
+}
+
+document.getElementById('merge-sort').addEventListener('click', async function() {
+  let bars = document.querySelectorAll('.sort-bar');
+  await mergeSort(bars, 0, bars.length - 1);
+});
 
 
 // Bind the bubble sort function
